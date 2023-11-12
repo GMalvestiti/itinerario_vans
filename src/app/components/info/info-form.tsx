@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  Box,
-  Button,
-  InputLabel,
-} from "@mui/material";
+import { Box, Button, InputLabel } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import GoogleMapsAutocomplete from "./google-autcomplete";
 import { PlaceType } from "@/app/lib/interfaces";
@@ -20,12 +16,24 @@ const initialData: PlaceType = {
   structured_formatting: null,
 };
 
-function getLatLngFromPlaceId(placeId: any): Promise<{ lat: number; lng: number } | null> {
+interface FunctionProps {
+  getRoute: (
+    orig: Array<Number>,
+    dest: Array<Number>,
+    steps: Array<Array<Number>>
+  ) => void;
+
+  isLoading: Boolean;
+}
+
+async function getLatLngFromPlaceId(
+  placeId: any
+): Promise<{ lat: number; lng: number } | null> {
   return new Promise((resolve) => {
     const geocoder = new window.google.maps.Geocoder();
 
     geocoder.geocode({ placeId }, (results: any, status: any) => {
-      if (status === 'OK' && results[0]?.geometry?.location) {
+      if (status === "OK" && results[0]?.geometry?.location) {
         const latLng = {
           lat: results[0].geometry.location.lat(),
           lng: results[0].geometry.location.lng(),
@@ -38,7 +46,10 @@ function getLatLngFromPlaceId(placeId: any): Promise<{ lat: number; lng: number 
   });
 }
 
-export default function InformationForm() {
+export default function InformationForm({
+  getRoute,
+  isLoading,
+}: FunctionProps) {
   const [origin, setOrigin] = useState<PlaceType>(initialData);
   const [end, setEnd] = useState<PlaceType>(initialData);
   const [ponto, setPonto] = useState<PlaceType>(initialData);
@@ -52,13 +63,42 @@ export default function InformationForm() {
   }, [ponto]);
 
   const handleSubmit = async function () {
-    const [origem, fim] = await Promise.all([getLatLngFromPlaceId(origin.place_id), getLatLngFromPlaceId(end.place_id)]);
-    let paradas: ({ lat: number; lng: number; } | null)[] = [];
+    const [origem, fim] = await Promise.all([
+      getLatLngFromPlaceId(origin.place_id),
+      getLatLngFromPlaceId(end.place_id),
+    ]);
+    let paradas: ({ lat: number; lng: number } | null)[] = [];
     pontos.forEach(async (ponto) => {
       const newParada = await getLatLngFromPlaceId(ponto.place_id);
-      paradas.push(newParada);
+      if (newParada) {
+        paradas.push({ lat: newParada.lat, lng: newParada.lng });
+      }
     });
-    console.log(origem, fim, paradas);
+
+    //Convert object To Array
+    let org: Array<Number> = [];
+    org.push(origem?.lat == undefined ? 0 : origem?.lat);
+    org.push(origem?.lng == undefined ? 0 : origem?.lng);
+
+    let dest: Array<Number> = [];
+    dest.push(fim?.lat == undefined ? 0 : fim?.lat);
+    dest.push(fim?.lng == undefined ? 0 : fim?.lng);
+
+    let steps: Array<Array<Number>> = [];
+    paradas.map((parada) => {
+      console.log(parada);
+      steps.push([
+        parada?.lat == undefined ? 0 : parada?.lat,
+        parada?.lng == undefined ? 0 : parada?.lng,
+      ]);
+    });
+
+    steps.push([
+      origem?.lat == undefined ? 0 : origem?.lat - 0.01,
+      origem?.lng == undefined ? 0 : origem?.lng - 0.01,
+    ]);
+
+    getRoute(org, dest, steps);
   };
 
   return (
@@ -107,6 +147,9 @@ export default function InformationForm() {
             fullWidth
             size="large"
             LinkComponent={Link}
+            disabled={
+              isLoading != undefined ? (isLoading ? true : false) : false
+            }
           >
             Calcular Rota
           </Button>
