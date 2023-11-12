@@ -7,11 +7,7 @@ import ThemeRegistry from '@/app/components/ThemeRegistry/ThemeRegistry';
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: {
-    template: "%s | ProDriver",
-    default: "ProDriver",
-  },
-  description: "Projeto ProDriver",
+  title: "Itinerário de Vans"
 };
 
 export default function RootLayout({
