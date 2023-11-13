@@ -25,3 +25,8 @@ body {
     )
     rgb(var(--background-start-rgb));
 }*/
+
+.map {
+  height: 500px;
+  width: 100%;
+}
