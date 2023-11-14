@@ -11,7 +11,6 @@ type RouteResponse = {
 
 export const POST = async (request: NextRequest) => {
   const body = await request.json();
-  console.log({ body });
 
   // Do something
   const api = axios.create({

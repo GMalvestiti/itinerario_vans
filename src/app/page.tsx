@@ -17,12 +17,12 @@ const defaultProps = {
 
 export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
-  const [results, setResult] = useState(null);
+  const [results, setResult] = useState<any>(null);
 
   async function getRoute(
-    orig: Array<Number>,
-    dest: Array<Number>,
-    steps: Array<Array<Number>>
+    orig: Array<number>,
+    dest: Array<number>,
+    steps: Array<Array<number>>
   ) {
     setIsLoading(true);
     const bodyR = { orig: orig, dest: dest, steps: steps };
@@ -67,7 +67,6 @@ export default function Page() {
               index < coords.length - 1;
               index += Math.ceil(coords.length / max_points_route)
             ) {
-              console.log(index);
               places.push({
                 lat: coords[index].y,
                 lng: coords[index].x,
@@ -78,7 +77,6 @@ export default function Page() {
               lat: coords[coords.length - 1].y,
               lng: coords[coords.length - 1].x,
             });
-            console.log(places.length);
           }
         );
       } catch (error) {}
@@ -89,8 +87,8 @@ export default function Page() {
   }
 
   const handleApiLoaded = (map: any, maps: any) => {
-    var rendererOptions = { map: map };
-    var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
+    const rendererOptions = { map: map };
+    let directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
     if (results != null) {
       let places: Array<{ lat: number; lng: number }> = [];
       places = results;
