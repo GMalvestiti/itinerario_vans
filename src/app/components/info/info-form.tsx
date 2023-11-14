@@ -18,12 +18,12 @@ const initialData: PlaceType = {
 
 interface FunctionProps {
   getRoute: (
-    orig: Array<Number>,
-    dest: Array<Number>,
-    steps: Array<Array<Number>>
-  ) => void;
+    orig: Array<number>,
+    dest: Array<number>,
+    steps: Array<Array<number>>
+  ) => Promise<void>;
 
-  isLoading: Boolean;
+  isLoading: boolean;
 }
 
 async function getLatLngFromPlaceId(
@@ -49,7 +49,7 @@ async function getLatLngFromPlaceId(
 export default function InformationForm({
   getRoute,
   isLoading,
-}: FunctionProps) {
+}: Readonly<FunctionProps>) {
   const [origin, setOrigin] = useState<PlaceType>(initialData);
   const [end, setEnd] = useState<PlaceType>(initialData);
   const [ponto, setPonto] = useState<PlaceType>(initialData);
@@ -76,27 +76,26 @@ export default function InformationForm({
     });
 
     //Convert object To Array
-    let org: Array<Number> = [];
+    let org: Array<number> = [];
     org.push(origem?.lat == undefined ? 0 : origem?.lat);
     org.push(origem?.lng == undefined ? 0 : origem?.lng);
 
-    let dest: Array<Number> = [];
+    let dest: Array<number> = [];
     dest.push(fim?.lat == undefined ? 0 : fim?.lat);
     dest.push(fim?.lng == undefined ? 0 : fim?.lng);
 
-    let steps: Array<Array<Number>> = [];
+    let steps: Array<Array<number>> = [];
     paradas.map((parada) => {
-      console.log(parada);
       steps.push([
         parada?.lat == undefined ? 0 : parada?.lat,
         parada?.lng == undefined ? 0 : parada?.lng,
       ]);
     });
 
-    steps.push([
+    /*steps.push([
       origem?.lat == undefined ? 0 : origem?.lat - 0.01,
       origem?.lng == undefined ? 0 : origem?.lng - 0.01,
-    ]);
+    ]);*/
 
     getRoute(org, dest, steps);
   };
