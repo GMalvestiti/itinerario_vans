@@ -27,8 +27,6 @@ export default function Page() {
     setIsLoading(true);
     const bodyR = { orig: orig, dest: dest, steps: steps };
 
-    console.log(steps)
-
     const response = await fetch("/api/request-route", {
       method: "POST",
       headers: {

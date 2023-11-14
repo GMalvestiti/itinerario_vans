@@ -75,6 +75,10 @@ export default function InformationForm({
       }
     });
 
+    while (paradas.length <= 0) {
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+
     //Convert object To Array
     let org: Array<number> = [];
     org.push(origem?.lat == undefined ? 0 : origem?.lat);
@@ -85,6 +89,7 @@ export default function InformationForm({
     dest.push(fim?.lng == undefined ? 0 : fim?.lng);
 
     let steps: Array<Array<number>> = [];
+
     paradas.map((parada) => {
       steps.push([
         parada?.lat == undefined ? 0 : parada?.lat,
